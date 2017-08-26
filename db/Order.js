@@ -15,7 +15,11 @@ const Order = conn.define('order', {
 Order.addProductToCart = function(id) {
 
   var target, currentCart;
-  return this.findAll()
+  return this.findAll({
+    where: {
+      isCart: true
+    }
+  })
   .then( result => {
     currentCart = result
     if (result.length === 0) {
@@ -73,6 +77,34 @@ Order.addProductToCart = function(id) {
       })
     }
 
+  })
+}
+
+Order.destroyLineItem = function(orderId, itemId) {
+  return this.findById(orderId)
+  .then( order => {
+    return conn.models.lineitem.findById(itemId)
+    .then( item => {
+      return order.removeLineitem(item)
+    })
+    .then( result => {
+      return conn.models.lineitem.destroy({
+        where: {
+          id: itemId
+        }
+      })
+    })
+  })
+}
+
+Order.updateFromRequestBody = function(orderId, reqBody) {
+  return this.update({
+    isCart: false,
+    address: reqBody.address
+  }, {
+    where: {
+      id: orderId
+    }
   })
 }
 

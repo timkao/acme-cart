@@ -8,8 +8,9 @@ ul img {
 }
 
 ul .btn-danger {
-  background-color: lightpink;
-  border-style: none
+  background-color: #8a6d3b;
+  border-style: none;
+  margin-top: 0.2em
 }
 
 
@@ -19,4 +20,13 @@ form {
 
 .alert-info {
   border-style: none;
+}
+
+.form-group {
+  margin-bottom: 0
+}
+
+.btn-primary {
+  background-color: #31708f;
+  border-style: none
 }
