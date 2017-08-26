@@ -2,7 +2,7 @@
   "name": "acme-cart",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "app.js",
   "dependencies": {
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
@@ -16,8 +16,8 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "start:dev": "DATABASE_URL=postgres://localhost/acmecartdb nodemon server.js"
+    "start": "node app.js",
+    "start:dev": "DATABASE_URL=postgres://localhost/acmecartdb nodemon app.js"
   },
   "author": "",
   "license": "ISC"
