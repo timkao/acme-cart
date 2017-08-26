@@ -19,7 +19,6 @@ const models = {
 }
 
 const seed = function() {
-  var target;
 
   var blackTeaImage = fs.readFileSync(path.join(__dirname, '../taiwanblacktea.jpg'))
   var cakeImage = fs.readFileSync(path.join(__dirname, '../pineapplecake.jpeg'))
