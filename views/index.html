@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/public/stylesheet/style.css"/>
+    <title>Shopping Cart</title>
+  </head>
+  <body>
+    <div class="container">
+      <p></p>
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="panel panel-info">
+            <div class="panel-heading lead">Taiwanese Treats<i class="glyphicon glyphicon-cutlery pull-right"></i></div>
+            <div class="panel-body">
+              <ul class="list-group">
+                {% for product in products %}
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-lg-5">{{product.name}}</div>
+                    <div class="col-lg-4">
+                      <img src="/public/{{product.name}}.jpg">
+                    </div>
+                    <div class="col-lg-3">
+                      <form action="/{{product.id}}/lineItems" method="POST">
+                        <button class="btn btn-default">Add to Cart</button>
+                      </form>
+                    </div>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="panel panel-warning">
+            <div class="panel-heading lead">Your Shopping Cart<i class="glyphicon glyphicon-shopping-cart pull-right"></i></div>
+            <div class="panel-body">
+              <ul class="list-group">
+                {% for item in items %}
+                <li class="list-group-item">{{item.product.name}}
+                  <span class="pull-right alert alert-info">{{item.quantity}}</span><br>
+                  <form action="/{{item.orderId}}/lineItems/{{item.id}}?_method=DELETE" method="POST">
+                    <button class="btn btn-danger">X</button>
+                  </form>
+                </li>
+                {% endfor %}
+              </ul>
+              {% if items %}
+                <div>address button</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
