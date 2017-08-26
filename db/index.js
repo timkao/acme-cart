@@ -19,21 +19,21 @@ const models = {
 }
 
 const seed = function() {
-
+  /*
   var blackTeaImage = fs.readFileSync(path.join(__dirname, '../taiwanblacktea.jpg'))
   var cakeImage = fs.readFileSync(path.join(__dirname, '../pineapplecake.jpeg'))
   var bubbleTeaImage = fs.readFileSync(path.join(__dirname, '../bubbletea.jpg'))
-
+  */
   var onshelf = [
-    ['Sun Moon Lake Black Tea', blackTeaImage],
-    ['Pineapple Cake', cakeImage],
-    ['Bubble Tea', bubbleTeaImage]
+    ['Sun Moon Lake Black Tea'],//, blackTeaImage],
+    ['Pineapple Cake'],//, cakeImage],
+    ['Bubble Tea']//, bubbleTeaImage]
   ]
 
   return Promise.all(onshelf.map(function(item){
     Product.create({
-      name: item[0],
-      image: item[1]
+      name: item[0]
+      //image: item[1]
     })
   }))
 }
