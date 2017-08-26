@@ -4,7 +4,7 @@ const conn = require('./conn')
 const Promise = require('bluebird')
 const fs = require('fs')
 const path = require('path')
-const Product = require('./product')
+const Product = require('./Product')
 const Order = require('./Order')
 const LineItem = require('./LineItem')
 
