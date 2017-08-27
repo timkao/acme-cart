@@ -1,6 +1,5 @@
 const port = process.env.PORT || 3000
 const db = require('./db')
-//const Promise = require('bluebird')
 const express = require('express')
 const app = express()
 const nunjucks = require('nunjucks')

@@ -19,7 +19,7 @@ const models = {
 }
 
 const seed = function() {
-  /*
+  /* for storing images in postgres
   var blackTeaImage = fs.readFileSync(path.join(__dirname, '../taiwanblacktea.jpg'))
   var cakeImage = fs.readFileSync(path.join(__dirname, '../pineapplecake.jpeg'))
   var bubbleTeaImage = fs.readFileSync(path.join(__dirname, '../bubbletea.jpg'))
