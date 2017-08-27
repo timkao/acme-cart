@@ -9,9 +9,6 @@ const Order = db.models.Order
 router.get('/', (req, res, next)=> {
   Order.findEverything()
   .then( result => {
-    console.log('-------------')
-    console.log(result)
-    console.log('-------------')
     res.render('index', result)
   })
       // var products, items;
@@ -95,61 +92,67 @@ router.put('/:id', (req, res, next)=> {
     .then( () => res.redirect('/'))
     .catch(ex => {
       if (ex.errors[0].message === 'address required') {
-        var products, items;
-        return Product.findAll()
-        .then( allProducts => {
-          products = allProducts
-
-          return Order.findAll({
-            where: {
-              isCart: true
-            }
-          })
+        return Order.findEverything()
+        .then( result => {
+          result.error = ex;
+          return res.render('index', result)
         })
-        .then( orders => {
-          if (orders.length !== 0) {
-            return orders[0].getLineitems()
-            .then( allItems => {
 
-              var tempArr = allItems.map(function(item){
-                return LineItem.findOne({
-                  where: {
-                    id: item.id
-                  },
-                  include: [Product]
-                })
-              })
-              return Promise.all(tempArr)
-            })
-            .then( finalItems => {
+        // var products, items;
+        // return Product.findAll()
+        // .then( allProducts => {
+        //   products = allProducts
 
-              var sortedItems = []
-              finalItems.forEach(function(item){
-                sortedItems[item.id - 1] = item
-              })
-              items = sortedItems.filter(function(item) {
-                return item.quantity !== null
-              })
-              return Order.findOrdersInfo()
+        //   return Order.findAll({
+        //     where: {
+        //       isCart: true
+        //     }
+        //   })
+        // })
+        // .then( orders => {
+        //   if (orders.length !== 0) {
+        //     return orders[0].getLineitems()
+        //     .then( allItems => {
 
-            })
-            .then( finalOrdersInfo => {
-              return res.render('index', {
-                products: products,
-                items: items,
-                orders: finalOrdersInfo,
-                error: ex
-              })
-            })
-          }
-          else {
-            Order.findOrdersInfo()
-            .then( finalOrderInfo => {
-              return res.render('index', {products: products, orders: finalOrderInfo, error: ex})
-            })
+        //       var tempArr = allItems.map(function(item){
+        //         return LineItem.findOne({
+        //           where: {
+        //             id: item.id
+        //           },
+        //           include: [Product]
+        //         })
+        //       })
+        //       return Promise.all(tempArr)
+        //     })
+        //     .then( finalItems => {
 
-          }
-        })
+        //       var sortedItems = []
+        //       finalItems.forEach(function(item){
+        //         sortedItems[item.id - 1] = item
+        //       })
+        //       items = sortedItems.filter(function(item) {
+        //         return item.quantity !== null
+        //       })
+        //       return Order.findOrdersInfo()
+
+        //     })
+        //     .then( finalOrdersInfo => {
+        //       return res.render('index', {
+        //         products: products,
+        //         items: items,
+        //         orders: finalOrdersInfo,
+        //         error: ex
+        //       })
+        //     })
+        //   }
+        //   else {
+        //     Order.findOrdersInfo()
+        //     .then( finalOrderInfo => {
+        //       return res.render('index', {products: products, orders: finalOrderInfo, error: ex})
+        //     })
+
+        //   }
+        // })
       }
       next(ex);
     });
