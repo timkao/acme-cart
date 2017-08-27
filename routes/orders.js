@@ -4,125 +4,75 @@ const Promise = require('bluebird')
 const Product = db.models.Product
 const LineItem = db.models.LineItem
 const Order = db.models.Order
-const fs = require('fs')
+//const fs = require('fs')  was for generating pictures in public folder
 
 router.get('/', (req, res, next)=> {
-      var products, items;
-      return Product.findAll()
-      .then( allProducts => {
-        products = allProducts
-        /*
-        products.forEach(function(item){
-          fs.writeFileSync(__dirname + '/../public/' + item.name + '.jpg', item.image)
-        })
-        */
-        return Order.findAll({
-          where: {
-            isCart: true
-          }
-        })
-      })
-      .then( orders => {
-        if (orders.length !== 0) {
-          return orders[0].getLineitems()
-          .then( allItems => {
+  Order.findEverything()
+  .then( result => {
+    console.log('-------------')
+    console.log(result)
+    console.log('-------------')
+    res.render('index', result)
+  })
+      // var products, items;
+      // return Product.findAll()
+      // .then( allProducts => {
+      //   products = allProducts
 
-            var tempArr = allItems.map(function(item){
-              return LineItem.findOne({
-                where: {
-                  id: item.id
-                },
-                include: [Product]
-              })
-            })
-            return Promise.all(tempArr)
-          })
-          .then( finalItems => {
-            // make it in order
-            // is there any other way? I was thinking to use Promise.each but the order of the items still random...
-            var sortedItems = []
-            finalItems.forEach(function(item){
-              sortedItems[item.id - 1] = item
-            })
-            items = sortedItems.filter(function(item) {
-              return item.quantity !== null
-            })
-            return Order.findOrdersInfo()
-            //res.render('index', {products: products, items: items})
-          })
-          .then( finalOrdersInfo => {
-            res.render('index', {
-              products: products,
-              items: items,
-              orders: finalOrdersInfo
-            })
-          })
-        }
-        else {
-          Order.findOrdersInfo()
-          .then( finalOrderInfo => {
-            res.render('index', {products: products, orders: finalOrderInfo})
-          })
-          /*
-          return Order.findAll({
-            where: {
-              isCart: false
-            }
-          })
-          .then( allFOrders => {
-            orders = allFOrders;
-            var orderIdArr = orders.map(function(order){
-              return order.id
-            })
+      //   /* for generating the pictures. only need to do it the first time.
+      //   products.forEach(function(item){
+      //     fs.writeFileSync(__dirname + '/../public/' + item.name + '.jpg', item.image)
+      //   })
+      //   */
 
-            return LineItem.findAll({
-              where: {
-                orderId: {
-                  $in: orderIdArr
-                }
-              }
-            })
-          })
-          .then( allFItems => {
-            var tempArr2 = allFItems.map(function(item){
-              return LineItem.findOne({
-                where: {
-                  id: item.id
-                },
-                include: [Product, Order]
-              })
-            })
-            return Promise.all(tempArr2)
-          })
-          .then( allFInfo => {
-            //console.log(allFInfo)
-            var FinalOrderInfo = {}
-            // Order ID, order address, product name, product quantity
+      //   return Order.findAll({
+      //     where: {
+      //       isCart: true
+      //     }
+      //   })
+      // })
+      // .then( orders => {
+      //   if (orders.length !== 0) {
+      //     return orders[0].getLineitems()
+      //     .then( allItems => {
 
-            allFInfo.forEach(function(line) {
-              if (!Object.keys(FinalOrderInfo).includes(line.orderId.toString())) {
-                FinalOrderInfo[line.orderId] = []
-                var temp = {}
-                temp['address'] = line.order.address
-                temp['name'] = line.product.name
-                temp['quantity'] = line.quantity
-                FinalOrderInfo[line.orderId].push(temp)
-              }
-              else {
-                var temp2 = {}
-                temp2['address'] = line.order.address
-                temp2['name'] = line.product.name
-                temp2['quantity'] = line.quantity
-                FinalOrderInfo[line.orderId].push(temp2)
-              }
-            })
-            //console.log(FinalOrderInfo)
-            res.render('index', {products: products, orders: FinalOrderInfo})
-          })
-          */
-        }
-      })
-
+      //       var tempArr = allItems.map(function(item){
+      //         return LineItem.findOne({
+      //           where: {
+      //             id: item.id
+      //           },
+      //           include: [Product]
+      //         })
+      //       })
+      //       return Promise.all(tempArr)
+      //     })
+      //     .then( finalItems => {
+      //       // make it in order
+      //       // is there any other way? I was thinking to use Promise.each but the order of the items still random...
+      //       var sortedItems = []
+      //       finalItems.forEach(function(item){
+      //         sortedItems[item.id - 1] = item
+      //       })
+      //       items = sortedItems.filter(function(item) {
+      //         return item.quantity !== null
+      //       })
+      //       return Order.findOrdersInfo()
+      //     })
+      //     .then( finalOrdersInfo => {
+      //       res.render('index', {
+      //         products: products,
+      //         items: items,
+      //         orders: finalOrdersInfo
+      //       })
+      //     })
+      //   }
+      //   else {
+      //     Order.findOrdersInfo()
+      //     .then( finalOrderInfo => {
+      //       res.render('index', {products: products, orders: finalOrderInfo})
+      //     })
+      //   }
+      // })
 })
 
 router.post('/:id/lineItems', (req, res, next) => {

@@ -104,7 +104,6 @@ Order.destroyLineItem = function(orderId, itemId) {
 }
 
 Order.updateFromRequestBody = function(orderId, reqBody) {
-
   return this.update({
     isCart: false,
     address: reqBody.address
@@ -117,6 +116,7 @@ Order.updateFromRequestBody = function(orderId, reqBody) {
 
 Order.findOrdersInfo = function() {
   var orders;
+  // get only placed orders
   return this.findAll({
     where: {
       isCart: false
@@ -150,7 +150,6 @@ Order.findOrdersInfo = function() {
   .then( allFInfo => {
     var FinalOrderInfo = {}
     // Order ID, order address, product name, product quantity
-
     allFInfo.forEach(function(line) {
       if (!Object.keys(FinalOrderInfo).includes(line.orderId.toString())) {
         FinalOrderInfo[line.orderId] = []
@@ -173,69 +172,66 @@ Order.findOrdersInfo = function() {
 
 }
 
-// Order.findAllInfo = function() {
-//   var products, items;
-//   return conn.models.product.findAll()
-//   .then( allProducts => {
-//     products = allProducts
-//     /*
-//     products.forEach(function(item){
-//       fs.writeFileSync(__dirname + '/../public/' + item.name + '.jpg', item.image)
-//     })
-//     */
-//     return this.findAll({
-//       where: {
-//         isCart: true
-//       }
-//     })
-//   })
-//   .then( orders => {
-//     if (orders.length !== 0) {
-//       return orders[0].getLineitems()
-//       .then( allItems => {
-
-//         var tempArr = allItems.map(function(item){
-//           return conn.models.lineitem.findOne({
-//             where: {
-//               id: item.id
-//             },
-//             include: [conn.models.product]
-//           })
-//         })
-//         return Promise.all(tempArr)
-//       })
-//       .then( finalItems => {
-//         // make it in order
-//         // is there any other way? I was thinking to use Promise.each but the order of the items still random...
-//         var sortedItems = []
-//         finalItems.forEach(function(item){
-//           sortedItems[item.id - 1] = item
-//         })
-//         items = sortedItems.filter(function(item) {
-//           return item.quantity !== null
-//         })
-//         return this.findOrdersInfo()
-//       })
-//       .then( finalOrdersInfo => {
-//         return products //{
-//         //   products: products,
-//         //   items: items,
-//         //   orders: finalOrdersInfo
-//         // }
-//       })
-//     }
-//     else {
-//       this.findOrdersInfo()
-//       .then( finalOrdersInfo => {
-//         return {
-//           products: products,
-//           items: items,
-//           orders: finalOrdersInfo
-//         }
-//       })
-//     }
-//   })
-// }
-
+Order.findEverything = function() {
+  var products, items;
+  return conn.models.product.findAll()
+  .then( allProducts => {
+      //   /* for generating the pictures. only need to do it the first time.
+      //   products.forEach(function(item){
+      //     fs.writeFileSync(__dirname + '/../public/' + item.name + '.jpg', item.image)
+      //   })
+      //   */
+    products = allProducts
+    return this.findAll({
+      where: {
+        isCart: true
+      }
+    })
+  })
+  .then( orders => {
+    if (orders.length !== 0) {
+      return orders[0].getLineitems()
+      .then( allItems => {
+        var tempArr = allItems.map(function(item){
+          return conn.models.lineitem.findOne({
+            where: {
+              id: item.id
+            },
+            include: [conn.models.product]
+          })
+        })
+        return Promise.all(tempArr)
+      })
+      .then( finalItems => {
+        // make it in order
+        // is there any other way? I was thinking to use Promise.each but the order of the items still random...
+        var sortedItems = []
+        finalItems.forEach(function(item){
+          sortedItems[item.id - 1] = item
+        })
+        items = sortedItems.filter(function(item) {
+          return item.quantity !== null
+        })
+        return this.findOrdersInfo()
+      })
+      .then( finalOrdersInfo => {
+        return {
+          products: products,
+          items: items,
+          orders: finalOrdersInfo
+        }
+      })
+    }
+    else {
+      return this.findOrdersInfo()
+      .then( finalOrdersInfo => {
+        return {
+          products: products,
+          orders: finalOrdersInfo
+        }
+      })
+    }
+  })
+}
 
 module.exports = Order
